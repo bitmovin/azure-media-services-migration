@@ -1,0 +1,9 @@
+{
+  "exclude": [
+    "src/**/*",
+    "vite.config.js"
+  ],
+  "files": [
+    "./migrateVideos.ts"
+  ]
+}

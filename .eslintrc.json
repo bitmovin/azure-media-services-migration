@@ -1,0 +1,30 @@
+{
+  "extends": ["react-app", "prettier"],
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": ["warn"],
+    "import/order": [
+      "warn",
+      {
+        "alphabetize": {
+          "order": "asc"
+        },
+        "newlines-between": "always",
+        "pathGroups": [
+          {
+            "pattern": "src/**",
+            "group": "parent",
+            "position": "before"
+          }
+        ]
+      }
+    ]
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true
+      }
+    }
+  }
+}
