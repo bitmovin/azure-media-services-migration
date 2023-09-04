@@ -52,7 +52,7 @@ interface Asset {
 
 const bitmovinClient = new BitmovinApi({apiKey: import.meta.env.VITE_BITMOVIN_API_KEY});
 const PAGE_SIZES = [10, 15, 20, 25, 50, 100];
-const CHUNK_SIZE = 2;
+const CHUNK_SIZE = 10;
 
 export function Migration() {
   const [assets, setAssets] = useState<Asset[]>(
