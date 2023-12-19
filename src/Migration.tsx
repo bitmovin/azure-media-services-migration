@@ -23,6 +23,7 @@ import {
   IconInfoCircle,
 } from '@tabler/icons-react';
 import byteSize from 'byte-size';
+import delay from 'delay';
 import _ from 'lodash';
 import {DataTable} from 'mantine-datatable';
 import {useCallback, useEffect, useState} from 'react';
@@ -53,6 +54,8 @@ interface Asset {
 const bitmovinClient = new BitmovinApi({apiKey: import.meta.env.VITE_BITMOVIN_API_KEY});
 const PAGE_SIZES = [10, 15, 20, 25, 50, 100];
 const CHUNK_SIZE = 10;
+//Due to rate limits, we need to wait before executing the next creation chunk.
+const CREATION_DELAY = 10_000;
 
 export function Migration() {
   const [assets, setAssets] = useState<Asset[]>(
@@ -66,11 +69,19 @@ export function Migration() {
   const {colorScheme, toggleColorScheme} = useMantineColorScheme();
   const isDarkTheme = colorScheme === 'dark';
 
-  const processAssets = async (assets: Asset[], updateAssetAction: (asset: Asset) => Promise<Asset>) => {
+  const processAssets = async (
+    assets: Asset[],
+    updateAssetAction: (asset: Asset) => Promise<Asset>,
+    delayDuration?: number,
+  ) => {
     const assetChunks = _.chunk(assets, CHUNK_SIZE);
 
     for (let chunk of assetChunks) {
       const updatedAssetsChunk = await Promise.all(chunk.map(updateAssetAction));
+
+      if (delayDuration) {
+        await delay(delayDuration);
+      }
 
       setAssets((prevAssets) => {
         return prevAssets.map((prevAsset) => {
@@ -126,7 +137,7 @@ export function Migration() {
       }
     };
 
-    await processAssets(selectedRecords, streamsCreationAction);
+    await processAssets(selectedRecords, streamsCreationAction, CREATION_DELAY);
   };
 
   useEffect(() => {
